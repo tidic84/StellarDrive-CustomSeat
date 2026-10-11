@@ -34,7 +34,7 @@ Each key has:
 
 - an **output** (1 to 8) — click to go to the next one, right-click for the previous one;
 - a **name**, shown in the on-screen help;
-- the **key** itself — click, then press any keyboard key, mouse button or gamepad button. `✕` unbinds it. If the
+- the **key** itself — click, then press any keyboard key, mouse button or gamepad button. `X` unbinds it. If the
   game's piloting controls already use that key, the window says so (both will happen when you press it);
 - a **mode** — *Hold*: on while the key is held; *Toggle*: each press switches it on or off;
 - a **value** — what it sends while it is on (default `1`; `-1`, `0.5`, `100`... all work).
@@ -43,11 +43,11 @@ Each key has:
 Several keys can drive the **same output**: their values add up. For example `Z` → output 1 = `1` and
 `S` → output 1 = `-1` turns output 1 into an axis (−1 / 0 / +1) for a hinge or a thruster.
 
-Changes are applied when the window closes (*Save* or Escape) and sent to every player. Key names follow your
+Changes are applied with *Save* (or Escape) and sent to every player; *Cancel* drops them. Key names follow your
 keyboard layout (AZERTY shows `&`, `é`, `"`... for the number row).
 
-While seated, a small help in the bottom-left corner lists the seat's keys, the output each one drives, and
-lights up the ones that are on.
+While seated, the seat's keys are listed in the bottom-left corner like the game's own control prompts: the key, its
+name and the output it drives; a key lights up while it is on.
 
 ![On-screen help](docs/hud.png)
 
@@ -96,7 +96,7 @@ saves the world (`src/Dev/DevTest.cs`). `KS_PHASE=2 ./dev.sh` then reopens that 
 ## Publishing to Stellar Mod Manager
 
 1. Push this folder to a GitHub repo named `StellarDrive-CustomSeat` (branch `main`), keeping `Mods/mod.json` and `Mods/Thumbnail.png`.
-2. Create a release tagged `v1.0.0` (must match `version` in `mod.json`) and attach `StellarDrive-CustomSeat.zip` (the asset name must be `<repo>.zip`).
+2. Create a release tagged `v1.1.0` (must match `version` in `mod.json`) and attach `StellarDrive-CustomSeat.zip` (the asset name must be `<repo>.zip`).
 3. Open a PR on [jollyname/StellarModRepository](https://github.com/jollyname/StellarModRepository) adding to `mods.json`:
 
 ```json

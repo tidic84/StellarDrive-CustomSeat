@@ -105,6 +105,29 @@ namespace KeySeat
             yield return Wait(1f);
         }
 
+
+        /// <summary>Moves the mouse onto the visible button labelled <paramref name="label"/> and clicks it (0 left, 1 right).</summary>
+        private IEnumerator Click(string label, int button, bool last = false)
+        {
+            var found = Object.FindObjectsByType<UnityEngine.UI.Button>(FindObjectsSortMode.None)
+                .Where(b => b.GetComponentInChildren<TMPro.TMP_Text>()?.text == label).ToList();
+            UnityEngine.UI.Button target = last ? found.OrderBy(b => b.transform.position.y).FirstOrDefault() : found.FirstOrDefault();
+            if (target == null)
+            {
+                Log.Msg($"[DEV] FAIL button '{label}' not found");
+                yield break;
+            }
+            var rt = (RectTransform)target.transform;
+            Vector2 pos = RectTransformUtility.WorldToScreenPoint(null, rt.TransformPoint(rt.rect.center));
+            InputSystem.QueueStateEvent(Mouse.current, new MouseState { position = pos });
+            yield return Wait(0.3f);
+            var b0 = button == 0 ? MouseButton.Left : MouseButton.Right;
+            InputSystem.QueueStateEvent(Mouse.current, new MouseState { position = pos }.WithButton(b0));
+            yield return Wait(0.2f);
+            InputSystem.QueueStateEvent(Mouse.current, new MouseState { position = pos });
+            yield return Wait(0.5f);
+            Log.Msg($"[DEV] clicked '{label}' at {pos}");
+        }
         private void Expect(string what, string expect)
         {
             string got = Displays();
@@ -123,6 +146,7 @@ namespace KeySeat
             yield return Wait(3f);
             Sit(_shipId);
             yield return Wait(2f);
+            if (Environment.GetEnvironmentVariable("KS_DUMP") == "1") { UiDump.DumpScene("piloting"); Shot("piloting"); yield return Wait(1f); }
             Log.Msg($"[DEV] seated={SeatInput.Seated}, keys of a new seat: {SeatConfigs.Get(SeatInput.Seat).Keys.Count}");
             yield return Hold("default keys 1+8", "1 0 0 0 0 0 0 1", Key.Digit1, Key.Digit8);
 
@@ -148,8 +172,18 @@ namespace KeySeat
             Log.Msg($"[DEV] window open={SeatInput.AnyMenuOpen()}");
             yield return Hold("key 1 with window open", "0 0 0 0 0 0 0 0", Key.Digit1);
             Shot("window");
+            // the window's buttons through real mouse clicks: add a key, bind it to K, right-click its output
+            yield return Click(Loc.T("+ Ajouter une touche", "+ Add a key"), 0);
+            yield return Tap(Key.K);
+            yield return Click(Loc.T("Sortie 2", "Output 2"), 1, last: true);
+            Shot("window_add");
             yield return Tap(Key.Escape);
             Log.Msg($"[DEV] window closed, menus={SeatInput.AnyMenuOpen()}");
+            {
+                SeatConfig after = SeatConfigs.Get(SeatInput.Seat);
+                KeyBinding added = after.Keys.LastOrDefault();
+                Log.Msg($"[DEV] {(after.Keys.Count == 10 && added.Path == "<Keyboard>/k" && added.Output == 0 ? "OK  " : "FAIL")} added through the window: {after.Keys.Count} keys, last {added?.Path} -> {added?.Output + 1}");
+            }
 
             Keys(Key.Z);
             yield return Wait(1f);
@@ -176,7 +210,7 @@ namespace KeySeat
             Sit(_shipId);
             yield return Wait(2f);
             SeatConfig c = SeatConfigs.Get(SeatInput.Seat);
-            Log.Msg($"[DEV] {(c.Keys.Count == 9 && c.Keys[8].Name == "Boost" ? "OK  " : "FAIL")} reloaded keys: {string.Join(", ", c.Keys.Select(k => $"{k.Label}={k.Path}->{k.Output + 1}"))}");
+            Log.Msg($"[DEV] {(c.Keys.Count == 10 && c.Keys[8].Name == "Boost" && c.Keys[9].Path == "<Keyboard>/k" ? "OK  " : "FAIL")} reloaded keys: {string.Join(", ", c.Keys.Select(k => $"{k.Label}={k.Path}->{k.Output + 1}"))}");
             yield return Hold("Z after reload", "2 0 0 0 0 0 0 0", Key.Z);
             yield return Tap(Key.Digit2);
             Expect("toggle 2 after reload", "0 1 0 0 0 0 0 0");

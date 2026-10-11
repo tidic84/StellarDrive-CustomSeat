@@ -1,7 +1,7 @@
 using MelonLoader;
 using UnityEngine.SceneManagement;
 
-[assembly: MelonInfo(typeof(KeySeat.KeySeatMod), "KeySeat", "1.0.0", "tidic84")]
+[assembly: MelonInfo(typeof(KeySeat.KeySeatMod), "KeySeat", "1.1.0", "tidic84")]
 [assembly: MelonGame("CuriousOwlGames", "StellarDrive")]
 
 namespace KeySeat
