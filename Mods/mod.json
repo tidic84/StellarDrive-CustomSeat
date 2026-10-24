@@ -4,5 +4,8 @@
     "author": "tidic84",
     "version": "1.1.0",
     "description": "A command seat: a regular pilot seat (flies like the advanced one) plus a keypad and 8 extra signal outputs, with its own customisable keys. Press F7 while seated to add keys and assign each one to an output, with a name, Hold or Toggle mode and the value it sends; several keys can share an output (their values add up, e.g. Z = +1 and S = -1). The keys belong to the seat: saved with the world, the same for everyone who sits in it. Wire the outputs to anything with signal cables: lights, doors, thrusters, logic gates, Arsenal weapons... Next to the advanced pilot seat, unlocked by the same research. Multiplayer: every player needs the mod.",
-    "thumbnail": "Thumbnail.png"
+    "thumbnail": "Thumbnail.png",
+    "ai": "vibecoded",
+    "development": "active",
+    "tags": ["ships"]
 }
